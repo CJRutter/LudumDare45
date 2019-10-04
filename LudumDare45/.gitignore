@@ -1,0 +1,13 @@
+*.pdb
+bin/
+obj/
+Builds/
+Temp/
+Library/
+.vs/
+*.user
+*.suo
+*.map
+*.userprefs
+*.csproj
+*.sln
