@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f663c5585dd6af40b83957a6f00da3c, type: 3}
   m_Name: Grayscale
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   enabled:
     overrideState: 1
     value: 1
   blend:
     overrideState: 1
-    value: 0.627
+    value: 0.01
 --- !u!114 &-5308533599692810429
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2786ed04db3aeb4eadf616a601b3095, type: 3}
   m_Name: LightBlend
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1

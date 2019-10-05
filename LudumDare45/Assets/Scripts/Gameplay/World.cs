@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class World : BaseBehaviour, ITileMap
+public class World : GameComponent, ITileMap
 {
     public override void Init()
     {
         base.Init();
+
+        Physics2D.gravity = Vector2.zero;
 
         ForegroundTilemap.SetTile(new Vector3Int(-1000, 0, 0), lightTile);
     }

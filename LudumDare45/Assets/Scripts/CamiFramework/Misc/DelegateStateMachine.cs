@@ -9,24 +9,20 @@ public class DelegateStateMachine<T>
 
     public void Update(float timeStep)
     {
-        if (states.ContainsKey(current))
-        {
-            CheckStateChange();
-            if (hasState)
-            {
-                states[current].Update(timeStep);
-                timeInCurrentState += timeStep;
-            }
-        }
+        CheckStateChange();
+        if (HasState == false) return;
+
+        states[current].Update(timeStep);
+        timeInCurrentState += timeStep;
+        
     }
 
-    public void ChangeState(T newState, bool forceStateChange = false)
+    public void ChangeState(T newState)
     {
-        if (!states.ContainsKey(newState))
-            return;
+        if (states.ContainsKey(newState) == false) return;
 
-        this.forceStateChange = forceStateChange;
         next = newState;
+        changeRequested = true;
     }
 
     public void Add(T state, EnterState enter, UpdateState update, ExitState exit)
@@ -41,22 +37,15 @@ public class DelegateStateMachine<T>
 
     private void CheckStateChange()
     {
-        if (hasState && current.Equals(next) && !forceStateChange)
-            return;
-
-        forceStateChange = false;
-
-        if (hasState)
-        {
+        if (changeRequested == false) return;
+        
+        if (HasState)
             states[current].Exit();
-        }
-        else
-        {
-            hasState = true;
-        }
 
         previous = current;
         current = next;
+        changeRequested = false;
+        HasState = true;
 
         timeInCurrentState = 0f;
 
@@ -68,6 +57,7 @@ public class DelegateStateMachine<T>
     public T Next  { get { return next; } }
     public T Previous { get { return previous; } }
     public float TimeInCurrentState { get { return timeInCurrentState; } }
+    public bool HasState { get; private set; }
     #endregion Properties
 
     #region Fields
@@ -75,9 +65,8 @@ public class DelegateStateMachine<T>
     private T next;
     private T previous;
     private Dictionary<T, State> states = new Dictionary<T, State>();
-    private bool hasState = false;
-    private bool forceStateChange = false;
     private float timeInCurrentState = 0f;
+    private bool changeRequested = false;
     #endregion Fields
 
     #region Delegates

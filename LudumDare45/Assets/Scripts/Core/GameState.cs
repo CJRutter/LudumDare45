@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameState : BaseBehaviour, IGameMode
+public class GameState : GameComponent
 {
-    public virtual void InitState()
+    public override void Init()
     {
-    }
+        base.Init();
 
+    }
+    
     public virtual void ReleaseState()
     {
     }

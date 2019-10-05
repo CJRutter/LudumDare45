@@ -2,30 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : BaseBehaviour
+public class ArtIntNode : GameComponent
 {
     public override void Init()
     {
         base.Init();
-
-        CreateGameStates();
+		
     }
 
     void Update()
     {
     }
 
-    private void CreateGameStates()
+    public void EnterArtInt(ArtInt artInt)
     {
-        gameStates = new StateMachine<System.Type>();
+        this.artInt = artInt;
+    }
 
-
+    public void ExitArtInt()
+    {
+        artInt = null;
     }
 
     #region Properties
     #endregion Properties        
 
     #region Fields
-    private StateMachine<System.Type> gameStates;
+    private ArtInt artInt;
     #endregion Fields
 }

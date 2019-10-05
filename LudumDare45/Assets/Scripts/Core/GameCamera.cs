@@ -2,30 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuState : GameState
+public class GameCamera : GameComponent
 {
     public override void Init()
     {
         base.Init();
-
+		
     }
 
-    public override void UpdateState(float timeStep)
+    void Update()
     {
-    }
-
-    public override void OnEnterState()
-    {
-        GameManager.CreateNewWorld();
-    }
-
-    public override void OnExitState()
-    {
+        if (Target != null)
+        {
+            Position2 = Target.position;
+        }
     }
 
     #region Properties
     #endregion Properties        
 
     #region Fields
+    public Transform Target;
     #endregion Fields
 }
