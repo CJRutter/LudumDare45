@@ -37,7 +37,12 @@ public class ArtInt : GameComponent
                 throttle = 1f;
                 thrustDir.x = 1f;
             }
-            currentNode.SendMessage("SetThrust", thrustDir * throttle);
+            var thrustControl = new ThrustControl()
+            {
+                Dir = thrustDir.normalized,
+                Throttle = throttle
+            };
+            currentNode.SendMessage("SetThrust", thrustControl);
 
             if (Input.GetKeyDown(KeyCode.F))
                 currentNode.SendMessage("ToggleFlightAssist");
@@ -52,6 +57,8 @@ public class ArtInt : GameComponent
 
             currentNode.SendMessage("RotateToDir", aimDir);
         }
+
+        DebugText.Add($"desiredThurst: {desiredThurst}");
     }
 
     public void MoveToNode(ArtIntNode node)
@@ -90,5 +97,6 @@ public class ArtInt : GameComponent
     public float MaxAimDis = 5f;
     private Vector2 aimDir;
     private float aimDis;
+    private Vector2 desiredThurst;  
     #endregion Fields
 }

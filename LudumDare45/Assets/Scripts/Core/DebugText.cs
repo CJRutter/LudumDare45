@@ -8,6 +8,7 @@ public class DebugText : SingletonBehavior<DebugText>
 {
 	void Update()
 	{
+        Clear();
     }
 
     void LateUpdate()

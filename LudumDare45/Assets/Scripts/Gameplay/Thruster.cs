@@ -9,70 +9,115 @@ public class Thruster : GameComponent
         base.Init();
 
         physicsBody = GetComponent<Rigidbody2D>();
+
+        NozzleDir.Normalize();
     }
 
     void Update()
     {
+        //DebugText.Add($"thruster {NozzleDir}:");
+        //DebugText.Add($"  throttle: {Throttle}");
+        //DebugText.Add($"  thrust: {thrust}");
+        //DebugText.Add($"  speed: {speed} ");
+
     }
-    
-    public void SetThrust(Vector2 requiredthrust)
+
+    public void SetThrust(ThrustControl thrustControl)
     {
-        float affect = Vector2.Dot(requiredthrust, NozzleDir);
-        thrust = affect * MaxThrust;
-        Throttle = affect;
+        this.desiredThrust = thrustControl;
+
+        float maxInfluence = Vector2.Dot(thrustControl.Dir * thrustControl.Throttle, -NozzleDir);
+        if (maxInfluence > 0f)
+        {
+            Throttle = maxInfluence;
+        }
+        else
+        {
+            Throttle = 0f;
+        }
     }
 
     public void SetFlightAssist(bool enabled)
     {
-        FlightAssist = enabled;
+        FlightAssistOn = enabled;
     }
 
     public void ToggleFlightAssist()
     {
-        FlightAssist = !FlightAssist;
-    }
-
-    private void PerformFlightAssist()
-    {
-        if (FlightAssist == false)
-            return;
-        if (Throttle > 0f)
-            return;
-
-        float velComp = Vector2.Dot(physicsBody.velocity, NozzleDir);
-        if (velComp >= 0f)
-            return;
-
-        float correctThrust = (-velComp / physicsBody.mass);
-        correctThrust = Mathf.Clamp(correctThrust, 0f, MaxThrust);
-        physicsBody.AddForce(NozzleDir * correctThrust);
+        FlightAssistOn = !FlightAssistOn;
     }
 
     private void FixedUpdate()
     {
+        PerformFlightAssist();
         if (Throttle > 0f)
         {
-            physicsBody.AddForce(NozzleDir * thrust);
-            Debug.LogFormat("NozzleDir * thrust: {0}", NozzleDir * thrust);
+            thrust = Throttle * MaxThrust;
+            physicsBody.AddForce(-NozzleDir * thrust);
         }
         else
         {
-            PerformFlightAssist();
+            thrust = 0f;
+            Throttle = 0f;
         }
+    }
+    
+    private void PerformFlightAssist()
+    {
+        if (FlightAssistOn == false) return;
+        if (desiredThrust.Throttle > 0f) return;
+
+        travelDir = physicsBody.velocity;
+        speed = travelDir.magnitude;
+        travelDir /= speed;
+
+        if (speed < CorrectionThreshold) return;
+
+        float maxDecel = MaxThrust / physicsBody.mass;
+        float throttle = Mathf.Max(speed / maxDecel, 1f);
+
+        float maxInfluence = Vector2.Dot(-travelDir * throttle, -NozzleDir);
+        if (maxInfluence <= 0f) return;
+        if (maxInfluence < CorrectionThreshold)
+        {
+            Throttle = 0f;
+            return;
+        }
+        Throttle = maxInfluence;
     }
 
     #region Properties
-    #endregion Properties        
+        #endregion Properties        
 
     #region Fields
     public Rigidbody2D physicsBody;
 
     public float MaxThrust = 10f;
     public float Throttle = 0f;
+    public float CorrectionThreshold = 0.1f;
     public Vector2 NozzleDir;
     private float thrust;
+    private Vector2 travelDir;
+    private float speed;
 
-    public bool FlightAssist = true;
-    //private CountDown commandCountdown
+    public bool FlightAssistOn = true;
+    private ThrustControl desiredThrust;
     #endregion Fields
+}
+
+public struct ThrustControl
+{
+    public ThrustControl(Vector2 dir, float throttle)
+    {
+        this.Dir = dir;
+        this.Throttle = throttle;
+    }
+
+    public static ThrustControl None
+    {
+        get { return new ThrustControl(Vector2.zero, 0); }
+    }
+
+    public Vector2 Dir;
+    public float Throttle;
 }
