@@ -29,12 +29,15 @@ public class LightCamera : BaseBehaviour
             Camera.targetTexture = Target;
             lightBlendSettings.lightTex.value = Target;
         }
+        if (Camera.orthographicSize != MainCamera.orthographicSize)
+            Camera.orthographicSize = MainCamera.orthographicSize;
     }
 
     #region Properties
     #endregion Properties        
 
     #region Fields
+    public Camera MainCamera;
     public Camera Camera;
     public RenderTexture Target;
     public PostProcessVolume LightPostProcVolume;

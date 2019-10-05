@@ -860,6 +860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84500547249eddd498d5f01eef25d15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainCamera: {fileID: 519420031}
   Camera: {fileID: 1623025308}
   Target: {fileID: 0}
   LightPostProcVolume: {fileID: 519420033}
